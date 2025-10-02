@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treasure Akanbi — Developer & Builder</title>
+  <meta name="description" content="Treasure Akanbi — web apps, embedded builds, AI & energy ideas. Responsive, accessible single-file portfolio." />
+
+  <!-- ===== Minimal theme init to avoid FOUC (runs before CSS) ===== -->
+  <script>
+    (function(){
+      try {
+        const stored = localStorage.getItem('site-theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if(stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) { /* ignore */ }
+    })();
+  </script>
+
+  <!-- Preconnect / font -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <!-- icons (deferred) -->
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ---------- Variables & theme ---------- */
+    :root{
+      --bg: #fbfdff;
+      --surface: #fff;
+      --muted: #6b7280;
+      --text: #07133a;
+      --accent-a: #06b6d4;
+      --accent-b: #10b981;
+      --glass: rgba(255,255,255,0.6);
+      --shadow: 0 10px 30px rgba(12,15,23,0.06);
+      --radius: 14px;
+      --maxw: 1200px;
+      --nav-h: 72px;
+      --focus: 4px rgba(6,182,212,0.12);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html.dark {
+      --bg: #071025;
+      --surface: #071727;
+      --muted: #9aa6b2;
+      --text: #e6f4fb;
+      --glass: rgba(255,255,255,0.03);
+      --shadow: 0 14px 40px rgba(2,6,23,0.7);
+    }
+
+    /* ---------- Basic reset & layout ---------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(6,182,212,0.03), transparent 8%), var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      transition:background .3s, color .25s;
+    }
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ---------- Skip link for keyboard users ---------- */
+    .skip-link{
+      position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;
+    }
+    .skip-link:focus{
+      left:12px;top:12px;width:auto;height:auto;padding:8px 12px;background:#111;color:#fff;border-radius:6px;z-index:9999;
+    }
+
+    /* ---------- Header ---------- */
+    header{
+      position:sticky;top:0;z-index:60;height:var(--nav-h);display:flex;align-items:center;
+      backdrop-filter:blur(8px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.28));
+      border-bottom:1px solid rgba(15,23,42,0.04);
+    }
+    html.dark header{
+      background: linear-gradient(180deg, rgba(6,6,6,0.35), rgba(6,6,6,0.2));
+      border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+    .nav {display:flex; align-items:center; justify-content:space-between; width:100%}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent-a),var(--accent-b));display:grid;place-items:center;color:white;font-weight:800}
+    nav.links{display:flex;gap:18px;align-items:center}
+    nav.links a{padding:8px 10px;border-radius:10px;font-weight:600;color:var(--muted)}
+    nav.links a:hover, nav.links a:focus{color:var(--text);background:linear-gradient(90deg, rgba(6,182,212,0.06), rgba(16,185,129,0.04))}
+
+    .controls{display:flex;gap:12px;align-items:center}
+    .theme-btn{
+      display:inline-grid;place-items:center;width:46px;height:46px;border-radius:12px;border:1px solid rgba(15,23,42,0.06);
+      background:var(--glass);cursor:pointer;padding:6px;
+    }
+    .theme-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(2,6,23,0.06)}
+
+    .hamb{display:none;background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer}
+    @media (max-width:900px){
+      nav.links{display:none}
+      .hamb{display:inline-flex}
+    }
+
+    /* ---------- Hero ---------- */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:36px;align-items:center;padding:56px 0}
+    @media (max-width:1040px){ .hero{grid-template-columns:1fr;text-align:center} .hero .hero-card{margin:0 auto} }
+    .title{font-size:2.6rem;font-weight:800;line-height:1.02}
+    .accent-text{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{margin-top:14px;color:var(--muted);max-width:60ch}
+
+    .cta{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start}
+    @media (max-width:1040px){ .cta{justify-content:center} }
+    .btn-primary{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#fff;padding:12px 16px;border-radius:12px;border:none;font-weight:700;box-shadow:0 10px 30px rgba(6,182,212,0.12)}
+    .btn-ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:10px 14px;border-radius:10px}
+
+    .hero-card{background:var(--surface);border-radius:16px;padding:18px;border:1px solid rgba(15,23,42,0.03);box-shadow:var(--shadow);max-width:420px}
+    .mini-form .input, .mini-form textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:transparent;color:var(--text);outline:none}
+    .mini-form textarea{min-height:86px;resize:vertical}
+
+    /* animated orbits */
+    .orbit-wrap{position:absolute;inset:0;pointer-events:none;z-index:-1}
+    .orbit{position:absolute;border-radius:999px;opacity:0.7;mix-blend-mode:screen}
+    .o1{width:420px;height:420px;left:-140px;top:-80px;border:1px dashed rgba(6,182,212,0.14);animation:spin 36s linear infinite}
+    .o2{width:260px;height:260px;right:-80px;top:-120px;border:1px dashed rgba(16,185,129,0.12);animation:spin 54s linear infinite reverse}
+    .o3{width:320px;height:320px;right:-40px;bottom:-120px;background:linear-gradient(180deg, rgba(6,182,212,0.06), rgba(16,185,129,0.03));filter:blur(18px);animation:spin 86s linear infinite}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    /* ---------- Sections & cards ---------- */
+    section{padding:42px 0}
+    h2{font-size:1.35rem;margin-bottom:8px}
+    .muted{color:var(--muted)}
+    .grid{display:grid;gap:18px}
+    .projects-grid{grid-template-columns:repeat(3,1fr)}
+    @media (max-width:1040px){ .projects-grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:720px){ .projects-grid{grid-template-columns:1fr} }
+
+    .card{background:var(--surface);border-radius:12px;padding:16px;border:1px solid rgba(15,23,42,0.03);box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.08)}
+
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .tag{font-size:0.75rem;padding:6px 8px;border-radius:999px;background:rgba(0,0,0,0.04);color:var(--muted)}
+
+    .blog-grid{grid-template-columns:repeat(3,1fr)}
+    @media (max-width:1040px){ .blog-grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:720px){ .blog-grid{grid-template-columns:1fr} }
+
+    .contact-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media (max-width:980px){ .contact-grid{grid-template-columns:1fr} }
+
+    /* ---------- Focus and reduced motion ---------- */
+    :focus { outline: none; }
+    :focus-visible { box-shadow: var(--focus); border-radius:8px; }
+    @media (prefers-reduced-motion: reduce) {
+      .orbit, .reveal { animation: none !important; transition: none !important; transform: none !important; }
+    }
+
+    /* reveal helper */
+    .reveal{opacity:0;transform:translateY(10px);transition:opacity .6s ease, transform .6s ease}
+    .reveal.show{opacity:1;transform:none}
+
+    /* small utilities */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+
+<body>
+  <!-- Skip to content -->
+  <a href="#mainContent" class="skip-link">Skip to main content</a>
+
+  <header>
+    <div class="container nav" role="navigation" aria-label="Main">
+      <a class="brand" href="#home" aria-label="Home">
+        <div class="logo" aria-hidden="true">T</div>
+        <div>
+          <div style="font-weight:800">Treasure Akanbi</div>
+          <small style="color:var(--muted)">Tech • Developer • Builder</small>
+        </div>
+      </a>
+
+      <nav class="links" aria-label="Primary navigation">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+        <a href="#resume" class="muted">Resume</a>
+      </nav>
+
+      <div class="controls">
+        <button id="themeBtn" class="theme-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <!-- icon set by JS -->
+          <svg data-lucide="moon" width="18" height="18"></svg>
+        </button>
+
+        <button id="menuBtn" class="hamb" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav" title="Open menu">
+          <svg data-lucide="menu" width="22" height="22"></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav id="mobileNav" style="display:none;" aria-hidden="true" aria-label="Mobile navigation">
+      <div class="container" style="padding:10px 0;display:flex;flex-direction:column;gap:8px">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="mainContent" tabindex="-1" class="container" style="padding-top:28px">
+    <!-- HERO -->
+    <section id="home" class="hero" aria-labelledby="hero-heading">
+      <div>
+        <h1 id="hero-heading" class="reveal">I build <span class="accent-text">beautiful, reliable tech</span> — from idea to product.</h1>
+        <p class="lead muted reveal">Developer & student who enjoys combining clean code, useful UX and hardware projects. I build dashboards, UI animations, embedded prototypes and explore AI for energy systems.</p>
+
+        <div class="cta reveal" style="margin-top:18px">
+          <a class="btn-primary" href="#projects">View Projects</a>
+          <a class="btn-ghost" href="#contact">Get in touch</a>
+        </div>
+
+        <div style="margin-top:20px;color:var(--muted)" class="reveal">
+          <a href="#" style="margin-right:14px">GitHub</a>
+          <a href="#" style="margin-right:14px">LinkedIn</a>
+          <a href="mailto:treasure@example.com">Email</a>
+        </div>
+      </div>
+
+      <aside style="position:relative">
+        <div class="orbit-wrap" aria-hidden="true">
+          <div class="orbit o1"></div>
+          <div class="orbit o2"></div>
+          <div class="orbit o3"></div>
+        </div>
+
+        <div class="hero-card reveal" aria-label="Quick contact card">
+          <strong>Say hi 👋</strong>
+          <div style="color:var(--muted);margin-top:6px;font-size:0.95rem">Quick message — demo only</div>
+
+          <form class="mini-form" style="margin-top:12px" onsubmit="event.preventDefault(); alert('Thanks — demo only'); this.reset();">
+            <input class="input" type="text" placeholder="Your name" aria-label="Name">
+            <input class="input" type="email" placeholder="Your email" aria-label="Email">
+            <textarea class="input" placeholder="Short message" aria-label="Message"></textarea>
+            <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:8px">
+              <button class="btn-primary" type="submit">Send</button>
+              <small class="muted">Reply within 48h (demo)</small>
+            </div>
+          </form>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" style="margin-top:38px">
+      <h2 class="reveal">Selected Projects</h2>
+      <p class="muted reveal" style="margin-bottom:12px">A curated list of projects that show the range of my skills.</p>
+
+      <div class="grid projects-grid reveal" style="margin-top:12px">
+        <article class="card" tabindex="0" aria-labelledby="proj1">
+          <h3 id="proj1">Sales Management Dashboard</h3>
+          <p class="muted">Interactive sales dashboard with checkout flow, editable carts and spreadsheet export.</p>
+          <div class="tags"><span class="tag">React</span><span class="tag">JS</span><span class="tag">Excel</span></div>
+          <div style="margin-top:12px"><a href="#" class="muted">Live</a> · <a href="#" class="muted">Code</a></div>
+        </article>
+
+        <article class="card" tabindex="0" aria-labelledby="proj2">
+          <h3 id="proj2">Animated Login UI</h3>
+          <p class="muted">Stylish animated login form with orbiting elliptical arcs and accessible interactions.</p>
+          <div class="tags"><span class="tag">CSS</span><span class="tag">Animation</span></div>
+          <div style="margin-top:12px"><a href="#" class="muted">Demo</a> · <a href="#" class="muted">Code</a></div>
+        </article>
+
+        <article class="card" tabindex="0" aria-labelledby="proj3">
+          <h3 id="proj3">Portable Plastic Shredder</h3>
+          <p class="muted">Engineering project: portable shredder design and build.</p>
+          <div class="tags"><span class="tag">Hardware</span><span class="tag">Engineering</span></div>
+          <div style="margin-top:12px"><a href="#" class="muted">Read</a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" style="margin-top:40px">
+      <h2 class="reveal">About Me</h2>
+      <div class="grid" style="grid-template-columns:2fr 1fr;gap:18px;align-items:start;margin-top:12px">
+        <div class="reveal">
+          <p class="muted">I'm Treasure Akanbi — a student and developer building projects that solve real problems. I enjoy web apps, embedded systems, and product design.</p>
+
+          <h4 style="margin-top:16px">Skills</h4>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span class="tag">JavaScript</span>
+            <span class="tag">React</span>
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">Embedded</span>
+            <span class="tag">Project Mgmt</span>
+          </div>
+        </div>
+
+        <aside class="card reveal" style="padding:12px">
+          <strong>Quick facts</strong>
+          <ul style="margin-top:8px;color:var(--muted);font-size:0.92rem;line-height:1.6">
+            <li>📍 Oyo State</li>
+            <li>🎓 Landmark University</li>
+            <li>🕒 Student</li>
+            <li>🧭 Interested in AI & energy</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section id="blog" style="margin-top:40px">
+      <h2 class="reveal">From the Journal</h2>
+      <p class="muted reveal" style="margin-bottom:12px">Short previews of writeups and lessons learned.</p>
+
+      <div class="grid blog-grid reveal" style="margin-top:12px">
+        <article class="card">
+          <h3>Lessons from Building a Dashboard</h3>
+          <p class="muted">Practical tips about data flows, UX and testing while building a sales tool.</p>
+          <div style="margin-top:10px"><a href="#" class="muted">Read →</a></div>
+        </article>
+
+        <article class="card">
+          <h3>AI in Power Distribution</h3>
+          <p class="muted">Thoughts about integrating AI into grid management and small-scale power systems.</p>
+          <div style="margin-top:10px"><a href="#" class="muted">Read →</a></div>
+        </article>
+
+        <article class="card">
+          <h3>Student Work Experience</h3>
+          <p class="muted">Reflections on hands-on engineering learning.</p>
+          <div style="margin-top:10px"><a href="#" class="muted">Read →</a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="margin-top:40px;margin-bottom:16px">
+      <h2 class="reveal">Contact</h2>
+      <p class="muted reveal" style="margin-bottom:12px">Open to internships, freelance work, and collaborations.</p>
+
+      <div class="contact-grid" style="margin-top:12px">
+        <!-- BEGIN: Formspree-enhanced contact form (replaces demo) -->
+        <div class="card reveal" style="padding:16px;">
+          <form id="contactForm" action="https://formspree.io/f/mdkwapez" method="POST" novalidate>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+              <label for="name">Full name</label>
+              <input id="name" name="name" class="input" type="text" required autocomplete="name" />
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+              <label for="email">Email</label>
+              <input id="email" name="email" class="input" type="email" required autocomplete="email" />
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" class="input" rows="6" required></textarea>
+            </div>
+
+            <!-- HONEYPOT: bots may fill this; humans won't -->
+            <div class="sr-only" aria-hidden="true">
+              <label>Leave this field empty</label>
+              <input name="hp" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="submitBtn" class="btn-primary" type="submit">Send</button>
+              <div id="status" class="muted" role="status" aria-live="polite" style="margin-left:8px"></div>
+            </div>
+
+            <!-- If you want a redirect on success without JS, uncomment and set -->
+            <!-- <input type="hidden" name="_next" value="https://yourdomain.com/thank-you.html"> -->
+          </form>
+        </div>
+        <!-- END: Formspree-enhanced contact form -->
+
+        <aside class="card reveal">
+          <h4>Contact Info</h4>
+          <p class="muted"><strong>Email:</strong> <a href="mailto:treasure@example.com">treasure@example.com</a></p>
+          <p class="muted"><strong>Available for:</strong> Internships · Freelance · Collaborations</p>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <a href="#" aria-label="GitHub"><svg data-lucide="github" width="18" height="18"></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg data-lucide="linkedin" width="18" height="18"></svg></a>
+            <a href="mailto:treasure@example.com" aria-label="Email"><svg data-lucide="mail" width="18" height="18"></svg></a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer style="padding:28px 0;border-top:1px solid rgba(15,23,42,0.04);text-align:center">
+    <div class="container">
+      <div style="margin-bottom:6px">© <span id="year"></span> Treasure Akanbi</div>
+      <div class="muted">Built with ❤️ — single-file demo</div>
+    </div>
+  </footer>
+
+  <script>
+    /* ---------- Icons init ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      if(window.lucide) lucide.createIcons();
+    });
+
+    /* ---------- Theme toggle (robust + accessible) ---------- */
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      const root = document.documentElement;
+      function setTheme(theme) {
+        if(theme === 'dark') {
+          root.classList.add('dark');
+          btn.setAttribute('aria-pressed','true');
+          btn.innerHTML = '<svg data-lucide="sun" width="18" height="18"></svg>';
+        } else {
+          root.classList.remove('dark');
+          btn.setAttribute('aria-pressed','false');
+          btn.innerHTML = '<svg data-lucide="moon" width="18" height="18"></svg>';
+        }
+        try { localStorage.setItem('site-theme', theme); } catch(e){}
+        if(window.lucide) lucide.createIcons();
+      }
+      const initial = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      setTheme(initial);
+      btn.addEventListener('click', () => setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark'));
+    })();
+
+    /* ---------- Mobile menu: toggle + focus management ---------- */
+    (function(){
+      const menuBtn = document.getElementById('menuBtn');
+      const mobile = document.getElementById('mobileNav');
+
+      function openMobile() {
+        mobile.style.display = 'block';
+        mobile.setAttribute('aria-hidden','false');
+        menuBtn.setAttribute('aria-expanded','true');
+        const first = mobile.querySelector('a');
+        if(first) first.focus();
+        document.addEventListener('focus', trapFocus, true);
+      }
+
+      function closeMobile() {
+        mobile.style.display = 'none';
+        mobile.setAttribute('aria-hidden','true');
+        menuBtn.setAttribute('aria-expanded','false');
+        menuBtn.focus();
+        document.removeEventListener('focus', trapFocus, true);
+      }
+
+      function trapFocus(e) {
+        if(!mobile.contains(e.target) && menuBtn.getAttribute('aria-expanded') === 'true') {
+          e.stopPropagation();
+          mobile.querySelector('a')?.focus();
+        }
+      }
+
+      menuBtn.addEventListener('click', () => {
+        const open = menuBtn.getAttribute('aria-expanded') === 'true';
+        if(open) closeMobile(); else openMobile();
+      });
+
+      document.addEventListener('keydown', (ev) => { if(ev.key === 'Escape') closeMobile(); });
+      mobile.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobile));
+    })();
+
+    /* ---------- Smooth internal scroll ---------- */
+    (function(){
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          const target = document.querySelector(a.getAttribute('href'));
+          if(target) {
+            e.preventDefault();
+            target.scrollIntoView({behavior:'smooth', block:'start'});
+          }
+        });
+      });
+    })();
+
+    /* ---------- Reveal-on-scroll ---------- */
+    (function(){
+      const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(prefersReduce) {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('show'));
+        return;
+      }
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if(en.isIntersecting) { en.target.classList.add('show'); }
+        });
+      }, {threshold: 0.12});
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    })();
+
+    /* ---------- Formspree-enhanced contact form handler ---------- */
+    (function(){
+      const form = document.getElementById('contactForm');
+      if(!form) return;
+      const submitBtn = document.getElementById('submitBtn');
+      const statusEl = document.getElementById('status');
+
+      function showStatus(msg, ok = true){
+        statusEl.textContent = msg;
+        statusEl.style.color = ok ? '' : 'crimson';
+      }
+
+      form.addEventListener('submit', async function(e){
+        // If JS disabled, browser will POST directly to the form action.
+        e.preventDefault();
+
+        // Basic HTML validity
+        if(!form.checkValidity()){
+          form.reportValidity();
+          return;
+        }
+
+        // Honeypot check
+        const hp = form.querySelector('[name="hp"]');
+        if(hp && hp.value.trim() !== ''){
+          showStatus('Message flagged as spam.', false);
+          return;
+        }
+
+        submitBtn.disabled = true;
+        const origText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending…';
+        showStatus('Sending…');
+
+        // POST to the action (Formspree endpoint)
+        try {
+          const fd = new FormData(form);
+          const res = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: fd
+          });
+
+          if(res.ok){
+            showStatus("Thanks! I'll get back to you soon.");
+            form.reset();
+          } else {
+            // Try to extract friendly message from response
+            let data = null;
+            try { data = await res.json(); } catch(err) { /* ignore */ }
+            const msg = data && data.error ? data.error : 'Could not send message. Please try again later.';
+            showStatus(msg, false);
+            console.error('Formspree error', res.status, data);
+          }
+        } catch(err){
+          console.error('Network error', err);
+          showStatus('Network error — check your connection and try again.', false);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = origText;
+        }
+      });
+
+      console.info('Formspree-enhanced form active — posting to:', form.action);
+    })();
+
+    /* ---------- Utilities ---------- */
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
